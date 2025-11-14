@@ -3,50 +3,36 @@ package com.practicum.mykino.activitys.data.network
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
-import com.practicum.mykino.activitys.data.dto.MovieDetailsRequest
-import com.practicum.mykino.activitys.data.dto.MoviesSearchRequest
-import com.practicum.mykino.activitys.data.dto.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-
-
+import com.practicum.mykino.activitys.data.cast.FullCastRequest
+import com.practicum.mykino.activitys.data.movies.dto.MovieDetailsRequest
+import com.practicum.mykino.activitys.data.movies.dto.MoviesSearchRequest
+import com.practicum.mykino.activitys.data.movies.dto.Response
+import com.practicum.mykino.activitys.data.names.NamesSearchRequest
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 class RetrofitNetworkClient(private val iMDbApiService:IMDbApiService,private val context: Context
     ) : NetworkClient {
 
-    private val imdbBaseUrl = "https://imdb-api.com"
-
-    private val retrofit = Retrofit.Builder()
-        .baseUrl(imdbBaseUrl)
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
-
-    private val imdbService = retrofit.create(IMDbApiService::class.java)
-
-    override fun doRequest(dto: Any): Response {
+    override suspend fun doRequest(dto: Any): Response {
         if (isConnected() == false) {
             return Response().apply { resultCode = -1 }
         }
-        if (dto is MoviesSearchRequest) {
-            val response = imdbService.searchMovies(dto.expression).execute()
-            val body = response.body()
-            return if (body != null) {
-                body.apply { resultCode = response.code() }
-            } else {
-                Response().apply { resultCode = response.code() }
-            }
-        }
 
-        if (dto is MovieDetailsRequest) {
-            val response = imdbService.getMovieDetails(dto.movieId).execute()
-            val body = response.body()
-            return if (body != null) {
-                body.apply { resultCode = response.code() }
-            } else {
-                Response().apply { resultCode = response.code() }
+        return withContext(Dispatchers.IO) {
+            try {
+                val response: Response = when(dto){
+                    is NamesSearchRequest -> iMDbApiService.searchName(dto.expression)
+                    is MoviesSearchRequest -> iMDbApiService.searchMovies(dto.expression)
+                    is MovieDetailsRequest -> iMDbApiService.getMovieDetails(dto.movieId)
+                    is FullCastRequest -> iMDbApiService.getFullCast(dto.movieId)
+                    else -> return@withContext Response().apply { resultCode = 400 }
+                }
+                response.apply { resultCode = 200 }
+            } catch (e: Throwable) {
+                Response().apply { resultCode = 500 }
             }
         }
-        return Response().apply { resultCode = 400 }
     }
 
     private fun isConnected(): Boolean {

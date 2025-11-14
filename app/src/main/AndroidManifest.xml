@@ -16,15 +16,18 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MyKino"
         tools:targetApi="31">
-        <activity
-            android:name=".activitys.ui.movies.MoviesActivity"
+
+        <activity android:name="com.practicum.mykino.activitys.ui.main.RootActivity"
+            android:windowSoftInputMode="adjustNothing"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
     </application>
+
 
 </manifest>

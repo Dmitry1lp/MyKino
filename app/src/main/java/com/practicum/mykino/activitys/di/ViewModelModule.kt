@@ -5,6 +5,8 @@ import org.koin.dsl.module
 import com.practicum.mykino.activitys.presentation.movies.MoviesViewModel
 import com.practicum.mykino.activitys.presentation.movies.PosterViewModel
 import com.practicum.mykino.activitys.presentation.about.AboutViewModel
+import com.practicum.mykino.activitys.presentation.movies.MoviesCastViewModel
+import com.practicum.mykino.activitys.presentation.names.NamesViewModel
 import org.koin.android.ext.koin.androidContext
 
 
@@ -20,6 +22,14 @@ val viewModelModule = module {
 
     viewModel {(posterUrl: String) ->
         PosterViewModel(posterUrl)
+    }
+
+    viewModel { (movieId: String) ->
+        MoviesCastViewModel(movieId, get())
+    }
+
+    viewModel {
+        NamesViewModel(androidContext(), get())
     }
 
 

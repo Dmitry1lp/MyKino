@@ -4,9 +4,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
+import com.practicum.mykino.R
 import com.practicum.mykino.activitys.domain.models.MovieDetails
 import com.practicum.mykino.activitys.presentation.about.AboutViewModel
+import com.practicum.mykino.activitys.ui.cast.MoviesCastFragment
 import com.practicum.mykino.activitys.ui.movies.models.AboutState
 import com.practicum.mykino.databinding.FragmentAboutBinding
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -61,17 +65,23 @@ class AboutFragment: Fragment() {
             when(it){
                 is AboutState.Error -> showErrorMessage(it.message)
                 is AboutState.Content -> showDetails(it.movie)
+                is AboutState.Loading -> null
             }
+        }
+
+        binding.bShowCast.setOnClickListener {
+            findNavController().navigate(R.id.action_detailsFragment_to_moviesCastFragment,
+                    MoviesCastFragment.createArgs(requireArguments().getString(MOVIE_ID).orEmpty()
+                )
+            )
         }
     }
 
     companion object {
         private const val MOVIE_ID = "movie_id"
 
-        fun newInstance(movieId: String) = AboutFragment().apply {
-            arguments = Bundle().apply {
-                putString(MOVIE_ID, movieId)
-            }
+        fun createArgs(movieId: String): Bundle =
+            bundleOf(MOVIE_ID to movieId)
         }
     }
-}
+

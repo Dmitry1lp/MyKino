@@ -1,19 +1,15 @@
 package com.practicum.mykino.activitys.domain.api
 
-import com.practicum.mykino.activitys.data.dto.MovieDetailsResponse
+import com.practicum.mykino.activitys.data.cast.FullCastResponse
 import com.practicum.mykino.activitys.domain.models.Movie
+import com.practicum.mykino.activitys.domain.models.MovieCast
 import com.practicum.mykino.activitys.domain.models.MovieDetails
+import kotlinx.coroutines.flow.Flow
 
 interface MoviesInteractor {
-    fun searchMovies(expression: String, consumer: MoviesConsumer)
+    fun searchMovies(expression: String): Flow<Pair<List<Movie>?, String?>>
 
-    interface MoviesConsumer {
-        fun consume(foundMovies: List<Movie>?, errorMessage: String?)
-    }
+    fun getMovieDetails(movieId: String): Flow<Pair<MovieDetails?, String?>>
 
-    fun getMovieDetails(movieId: String, consumer: MovieDetailsConsumer)
-
-    interface MovieDetailsConsumer {
-        fun consume(foundDetails: MovieDetails?, errorMessage: String?)
-    }
+    fun getFullCastData(movieId: String): Flow<Pair<MovieCast?, String?>>
 }

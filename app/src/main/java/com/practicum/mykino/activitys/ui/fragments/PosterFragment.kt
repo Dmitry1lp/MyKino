@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.practicum.mykino.activitys.presentation.movies.PosterViewModel
@@ -47,10 +48,7 @@ class PosterFragment : Fragment() {
     companion object {
         private const val POSTER_URL = "poster_url"
 
-        fun newInstance(posterUrl: String) = PosterFragment().apply {
-            arguments = Bundle().apply {
-                putString(POSTER_URL, posterUrl)
-            }
-        }
+        fun createArgs(posterUrl: String): Bundle =
+            bundleOf(POSTER_URL to posterUrl)
     }
 }

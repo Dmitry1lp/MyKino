@@ -1,8 +1,8 @@
 package com.practicum.mykino.activitys.data.network
 
-import com.practicum.mykino.activitys.data.dto.Response
+import com.practicum.mykino.activitys.data.movies.dto.Response
 
 interface NetworkClient {
-    fun doRequest(dto: Any): Response
+    suspend fun doRequest(dto: Any): Response
 
 }

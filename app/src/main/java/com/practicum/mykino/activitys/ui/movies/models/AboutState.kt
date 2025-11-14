@@ -4,6 +4,8 @@ import com.practicum.mykino.activitys.domain.models.MovieDetails
 
 sealed interface AboutState {
 
+    object Loading : AboutState
+
     data class Content(
         val movie: MovieDetails
     ) : AboutState
